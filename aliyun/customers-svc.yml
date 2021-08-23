@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customers
+spec:
+  selector:
+    matchLabels:
+      app: customers
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: customers
+    spec:
+      serviceAccountName: test
+      containers:
+      - name: customers
+        image: registry.cn-hangzhou.aliyuncs.com/muyer-hub/hub1:k8s-customers-1.0
+        envFrom:
+        - configMapRef:
+            name: k8s-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: customers
+spec:
+  selector:
+    app: customers
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  type: ClusterIP

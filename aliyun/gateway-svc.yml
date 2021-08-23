@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+spec:
+  selector:
+    matchLabels:
+      app: gateway
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      serviceAccountName: test
+      containers:
+      - name: gateway-service
+        image: registry.cn-hangzhou.aliyuncs.com/muyer-hub/hub1:k8s-gateway-1.0
+        envFrom:
+        - configMapRef:
+            name: k8s-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway
+spec:
+  selector:
+    app: gateway
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  type: LoadBalancer

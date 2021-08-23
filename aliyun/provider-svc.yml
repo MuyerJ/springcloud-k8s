@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: providers
+spec:
+  selector:
+    matchLabels:
+      app: providers
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: providers
+    spec:
+      serviceAccountName: test
+      containers:
+      - name: providers
+        image: registry.cn-hangzhou.aliyuncs.com/muyer-hub/hub1:k8s-provider-1.0
+        envFrom:
+        - configMapRef:
+            name: k8s-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: providers
+spec:
+  selector:
+    app: providers
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  type: ClusterIP
+
+
+
+
+---
+/api/provider/providers/hello
